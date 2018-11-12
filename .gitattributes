@@ -1,0 +1,7 @@
+*                         text=auto
+.gitattributes            eol=lf
+.gitignore                eol=lf
+**/*.vsixmanifest         gitlab-language=xml
+*.cs                      diff=csharp
+*.sln                     eol=crlf merge=union
+*.csproj                  eol=crlf merge=union gitlab-language=xml
