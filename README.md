@@ -22,6 +22,15 @@ Once the options have been configured, the tokens' model binder can be made acti
 services.AddMvc().AddContinuationTokens();
 ```
 
+The type may now be used as a parameter to a controller action, as demonstrated here with an action which retrieved a page of Pool entities:
+
+```csharp
+public async Task<ActionResult<Dto.PoolPage>> GetPools(
+  [FromQuery] ContinuationToken<DateTimeOffset> offset,
+  [FromQuery, Range(1, 25)] int? limit,
+  CancellationToken cancellationToken = default) { /* ... */}
+```
+
 A limitation of the library is that it can only encode and decode values of types that can be converted to and from strings. It checks for this functionality by ensuring that the type's type converter supports such conversion by calling the method `CanConvertFrom` with an argument of `typeof(string)`. Nearly every C# primitive implements this in a reasonable way, and the library provides support for `DateTimeOffset`, which does not. Custom types can opt into such convertability via the `TypeConverterAttribute`. For example, a cartesian coordinate could convert to the string value "2,3", which would then be encoded. (It's recommended to keep the string representations produced by such type converters terse, as they're not intended to be human-produced or -readable.) That said, this library considers it unlikely that the decoded type of a continuation token will fall outside of this collection of types:
 
 - `DateTimeOffset`
