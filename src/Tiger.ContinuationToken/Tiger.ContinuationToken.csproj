@@ -5,7 +5,7 @@
     <Copyright>©Cimpress 2018</Copyright>
     <AssemblyTitle>Tiger Continuation Token</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
@@ -16,7 +16,7 @@
     <AssemblyName>Tiger.ContinuationToken</AssemblyName>
     <PackageId>Tiger.ContinuationToken</PackageId>
     <PackageTags>continuation token;continuation;token</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 1.0.0
+    <PackageReleaseNotes><![CDATA[➟ Release 1.0.1
 ⁃ Everything is new!
 ]]></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken</PackageProjectUrl>
@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
     <PackageReference Include="Tiger.Types" Version="5.0.0" />
 
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" PrivateAssets="All" />
