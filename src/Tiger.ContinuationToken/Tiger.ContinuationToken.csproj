@@ -13,8 +13,8 @@
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <CodeAnalysisRuleSet>../../Tiger.ruleset</CodeAnalysisRuleSet>
-    <AssemblyName>Tiger.Hal</AssemblyName>
-    <PackageId>Tiger.Hal</PackageId>
+    <AssemblyName>Tiger.ContinuationToken</AssemblyName>
+    <PackageId>Tiger.ContinuationToken</PackageId>
     <PackageTags>continuation token;continuation;token</PackageTags>
     <PackageReleaseNotes><![CDATA[➟ Release 1.0.0
 ⁃ Everything is new!

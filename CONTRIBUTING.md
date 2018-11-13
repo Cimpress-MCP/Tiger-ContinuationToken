@@ -1,4 +1,4 @@
-# Tiger.Hal
+# Tiger.ContinuationToken
 
 This project is using the standard [`dotnet`] build tool. A brief primer:
 
