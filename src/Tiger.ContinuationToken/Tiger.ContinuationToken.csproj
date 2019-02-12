@@ -5,7 +5,7 @@
     <Copyright>©Cimpress 2018</Copyright>
     <AssemblyTitle>Tiger Continuation Token</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <VersionPrefix>1.0.1</VersionPrefix>
+    <VersionPrefix>1.0.2</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
@@ -16,7 +16,10 @@
     <AssemblyName>Tiger.ContinuationToken</AssemblyName>
     <PackageId>Tiger.ContinuationToken</PackageId>
     <PackageTags>continuation token;continuation;token</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 1.0.1
+    <PackageReleaseNotes><![CDATA[➟ Release 1.0.2
+⁃ The library's documentation generation, via Swashbuckle, has been upgraded.
+
+➟ Release 1.0.1
 ⁃ Everything is new!
 ]]></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken</PackageProjectUrl>
@@ -36,16 +39,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="Tiger.Types" Version="5.0.0" />
 
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.3" PrivateAssets="All" />
     <PackageReference Include="Roslynator.Analyzers" Version="2.0.0" PrivateAssets="All" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta009" PrivateAssets="All" />
-    <PackageReference Include="Text.Analyzers" Version="2.6.2" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.1-rc.94" PrivateAssets="All" />
+    <PackageReference Include="Text.Analyzers" Version="2.6.3" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
