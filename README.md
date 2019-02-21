@@ -10,13 +10,9 @@ In order for a particular scan of a paginated collection resource in a RESTful w
 
 ## How to Use It
 
-Begin by configuring the options for continuation token encoding. These are represented by the type `Tiger.ContinuationToken.ContinuationTokenOptions`, and the properties `Password` and `Salt` are required to be configured by the application. (It's _strongly_ recommended that these values are stored securely, rather than directly in appsettings. Continuation tokens themselves are not sensitive resources, but it would be a terrible habit to get into, wouldn't it?) This is typically done in the `Configure` method ofthe application's startup class.
+Begin by configuring the ASP.NET Core Data Protection API. This is typically done in the `Configure` method of the application's startup class. Many deployment strategies can accept the default, but AWS Lambda Functions (or anything like them) should consider using a store that is outside of any particular compute environment. A database, Redis, SSM Parameter store, all of these are possibilities.
 
-```csharp
-services.Configure<ContinuationTokenOptions>(Configuration.GetSection("ContinuationToken"));
-```
-
-Once the options have been configured, the tokens' model binder can be made active in the `ConfigureServices` method of an ASP.NET Core application after a call to `AddMvc`.
+Once the protection has been configured, the tokens' model binder can be made active in the `ConfigureServices` method of an ASP.NET Core application after a call to `AddMvc`.
 
 ```csharp
 services.AddMvc().AddContinuationTokens();

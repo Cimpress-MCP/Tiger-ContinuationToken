@@ -14,10 +14,7 @@
 //   limitations under the License.
 // </copyright>
 
-using System.Security.Cryptography;
-using System.Text;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Options;
 using Tiger.ContinuationToken;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -34,14 +31,8 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IMvcBuilder AddContinuationTokens([NotNull] this IMvcBuilder builder)
         {
             builder.Services
-                .AddSingleton<SymmetricAlgorithm, AesManaged>()
-                .AddSingleton<DeriveBytes, Rfc2898DeriveBytes>(p =>
-                {
-                    var opts = p.GetRequiredService<IOptions<ContinuationTokenOptions>>().Value;
-                    var saltBytes = Encoding.UTF8.GetBytes(opts.Salt);
-                    return new Rfc2898DeriveBytes(opts.Password, saltBytes, opts.Iterations);
-                })
-                .AddSingleton(typeof(IEncryption<>), typeof(SymmetricEncryption<>));
+                .AddTransient(typeof(IEncryption<>), typeof(DataProtectorEncryption<>))
+                .AddDataProtection();
 
             return builder.AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new ModelBinderProvider()));
         }

@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Security.Cryptography;
 using FsCheck;
 using FsCheck.Xunit;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Tiger.ContinuationToken;
 using Xunit;
 
 namespace Test
 {
-    [Properties(
-        Arbitrary = new[] { typeof(Generators) },
-        QuietOnSuccess = true)]
+    [Properties(Arbitrary = new[] { typeof(Generators) }, QuietOnSuccess = true)]
     public abstract class EncryptionTests
     {
     }
@@ -20,12 +18,11 @@ namespace Test
         where TData: struct
     {
         [Property(DisplayName = "Values can round-trip through encryption.")]
-        public void RoundTripEncryption(NonNull<string> password, byte[] salt, PositiveInt iterations, TData datum)
+        public void RoundTripEncryption(TData datum)
         {
-            IEncryption<TData> sut = new SymmetricEncryption<TData>(
-                new AesManaged(),
-                new Rfc2898DeriveBytes(password.Get, salt, iterations.Get),
-                new NullLogger<SymmetricEncryption<TData>>());
+            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+                NullLogger<DataProtectorEncryption<TData>>.Instance);
 
             var actual = sut.Decrypt(sut.Encrypt(datum));
 
@@ -38,12 +35,11 @@ namespace Test
         where TData : class
     {
         [Property(DisplayName = "References can round-trip through encryption.")]
-        public void RoundTripEncryption(NonNull<string> password, byte[] salt, PositiveInt iterations, NonNull<TData> datum)
+        public void RoundTripEncryption(NonNull<TData> datum)
         {
-            IEncryption<TData> sut = new SymmetricEncryption<TData>(
-                new AesManaged(),
-                new Rfc2898DeriveBytes(password.Get, salt, iterations.Get),
-                new NullLogger<SymmetricEncryption<TData>>());
+            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+                NullLogger<DataProtectorEncryption<TData>>.Instance);
 
             var actual = sut.Decrypt(sut.Encrypt(datum.Get));
 
