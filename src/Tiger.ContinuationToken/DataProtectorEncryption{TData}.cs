@@ -1,4 +1,4 @@
-﻿// <copyright file="SymmetricEncryption{TData}.cs" company="Cimpress, Inc.">
+﻿// <copyright file="DataProtectorEncryption{TData}.cs" company="Cimpress, Inc.">
 //   Copyright 2018 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,24 +17,23 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using JetBrains.Annotations;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Logging;
-using static System.Security.Cryptography.CryptoStreamMode;
 
 namespace Tiger.ContinuationToken
 {
     /// <summary>Provides symmetric encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
     /// <typeparam name="TData">The type on which to perform operations.</typeparam>
-    public sealed class SymmetricEncryption<TData>
+    public sealed class DataProtectorEncryption<TData>
         : IEncryption<TData>
     {
         /* note(cosborn)
          * DateTimeOffset is a special type. We want its string representation to be
          * the roundtrip kind, not the weirdo kind that the default TypeConverter gives us.
          * Yay for reified types, I guess? With erasure, this would be next to impossible.
+         * I mean, Java-style type erasure, where you don't have typeclasses to opt into.
          * Wanna know how to do it despite erasure? No, you don't. Don't look. Don't read on.
          * [Attach TypeConverterAttribute to DateTimeOffset at runtime, convert, remove,
          * wash hands forever, never stop washing hands. And that might *still* not work!
@@ -44,31 +43,22 @@ namespace Tiger.ContinuationToken
             ? new RoundTripDateTimeOffsetConverter()
             : TypeDescriptor.GetConverter(typeof(TData));
 
-        static readonly Encoding s_encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-        readonly SymmetricAlgorithm _algorithm;
+        readonly IDataProtector _dataProtector;
         readonly ILogger _logger;
 
-        readonly Lazy<byte[]> _key;
-        readonly Lazy<byte[]> _iv;
-
-        /// <summary>Initializes a new instance of the <see cref="SymmetricEncryption{TData}"/> class.</summary>
-        /// <param name="algorithm">The algorithm with which to perform encryption and decryption operations.</param>
-        /// <param name="deriveBytes">The byte derivation service.</param>
+        /// <summary>Initializes a new instance of the <see cref="DataProtectorEncryption{TData}"/> class.</summary>
+        /// <param name="dataProtectionProvider">The application's provder of instances of <see cref="IDataProtector"/>.</param>
         /// <param name="logger">
-        /// The appliation's logger, specialized for <see cref="SymmetricEncryption{TData}"/>.
+        /// The appliation's logger, specialized for <see cref="DataProtectorEncryption{TData}"/>.
         /// </param>
-        public SymmetricEncryption(
-            [NotNull] SymmetricAlgorithm algorithm,
-            [NotNull] DeriveBytes deriveBytes,
-            [NotNull] ILogger<SymmetricEncryption<TData>> logger)
+        public DataProtectorEncryption(
+            [NotNull] IDataProtectionProvider dataProtectionProvider,
+            [NotNull] ILogger<DataProtectorEncryption<TData>> logger)
         {
-            _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            if (dataProtectionProvider is null) { throw new ArgumentNullException(nameof(dataProtectionProvider)); }
 
-            // note(cosborn) We don't want these recalculated if the instance sticks around.
-            _key = new Lazy<byte[]>(() => deriveBytes.GetBytes(_algorithm.KeySize / 8));
-            _iv = new Lazy<byte[]>(() => deriveBytes.GetBytes(_algorithm.BlockSize / 8));
+            _dataProtector = dataProtectionProvider.CreateProtector("Tiger.DataProtectorEncryption`1.v2");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <inheritdoc/>
@@ -76,25 +66,7 @@ namespace Tiger.ContinuationToken
         {
             if (ciphertext is null) { throw new ArgumentNullException(nameof(ciphertext)); }
 
-            byte[] cipherbytes;
-            try
-            {
-                cipherbytes = Convert.FromBase64String(ciphertext);
-            }
-            catch (FormatException fe)
-            {
-                throw new CryptographicException("The encrypted value is in a bad format.", fe);
-            }
-
-            string plaintext;
-            using (var ms = new MemoryStream(cipherbytes))
-            using (var de = _algorithm.CreateDecryptor(_key.Value, _iv.Value))
-            using (var cs = new CryptoStream(ms, de, Read))
-            using (var sr = new StreamReader(cs, s_encoding))
-            {
-                plaintext = sr.ReadToEnd();
-            }
-
+            var plaintext = _dataProtector.Unprotect(ciphertext);
             try
             {
                 return (TData)s_typeConverter.ConvertFromInvariantString(plaintext);
@@ -112,10 +84,10 @@ namespace Tiger.ContinuationToken
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
 
-            string plainText;
+            string plaintext;
             try
             {
-                plainText = s_typeConverter.ConvertToInvariantString(value);
+                plaintext = s_typeConverter.ConvertToInvariantString(value);
             }
             catch (NotSupportedException nse)
             {
@@ -123,17 +95,7 @@ namespace Tiger.ContinuationToken
                 throw new CryptographicException("The value cannot be converted into a string for encryption.", nse);
             }
 
-            using (var ms = new MemoryStream())
-            using (var en = _algorithm.CreateEncryptor(_key.Value, _iv.Value))
-            using (var cs = new CryptoStream(ms, en, Write))
-            using (var sw = new StreamWriter(cs, s_encoding))
-            {
-                sw.Write(plainText);
-                sw.Flush();
-                cs.FlushFinalBlock();
-
-                return Convert.ToBase64String(ms.ToArray());
-            }
+            return _dataProtector.Protect(plaintext);
         }
     }
 }

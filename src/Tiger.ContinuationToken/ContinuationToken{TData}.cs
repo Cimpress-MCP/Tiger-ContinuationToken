@@ -58,7 +58,7 @@ namespace Tiger.ContinuationToken
         /// <returns>
         /// <see langword="true"/> if the instance are equal; otherwise, <see langword="false"/>.
         /// </returns>
-        public static bool operator ==(ContinuationToken<TData> left, ContinuationToken<TData> right) =>
+        public static bool operator ==(in ContinuationToken<TData> left, in ContinuationToken<TData> right) =>
             left.Equals(right);
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Tiger.ContinuationToken
         /// <returns>
         /// <see langword="true"/> if the instance are not equal; otherwise, <see langword="false"/>.
         /// </returns>
-        public static bool operator !=(ContinuationToken<TData> left, ContinuationToken<TData> right) =>
+        public static bool operator !=(in ContinuationToken<TData> left, in ContinuationToken<TData> right) =>
             !(left == right);
 
         /// <inheritdoc/>

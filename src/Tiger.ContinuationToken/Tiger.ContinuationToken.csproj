@@ -5,7 +5,7 @@
     <Copyright>©Cimpress 2018</Copyright>
     <AssemblyTitle>Tiger Continuation Token</AssemblyTitle>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <VersionPrefix>1.0.2</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <DefineConstants>$(DefineConstants);CODE_ANALYSIS</DefineConstants>
@@ -16,11 +16,8 @@
     <AssemblyName>Tiger.ContinuationToken</AssemblyName>
     <PackageId>Tiger.ContinuationToken</PackageId>
     <PackageTags>continuation token;continuation;token</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 1.0.2
-⁃ The library's documentation generation, via Swashbuckle, has been upgraded.
-
-➟ Release 1.0.1
-⁃ Everything is new!
+    <PackageReleaseNotes><![CDATA[➟ Release 2.0.0
+⁃ The library has shed all of its bespoke cryptographic code, deferring to the ASP.NET Core Data Protection APIs.
 ]]></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken</PackageProjectUrl>
     <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
@@ -39,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="2.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="Tiger.Types" Version="5.0.0" />
 
