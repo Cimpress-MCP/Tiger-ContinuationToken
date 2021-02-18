@@ -1,3 +1,9 @@
+## What's new in 3.0.0 (Released 2021-02-19)
+
+* The library has grown compatiblity for modern target frameworks.
+  * netcoreapp3.1
+  * net5.0
+
 ## What's new in 2.0.0 (Released 2019-02-28)
 
 * The library has shed all of its bespoke cryptographic code, deferring to the ASP.NET Core Data Protection APIs.
