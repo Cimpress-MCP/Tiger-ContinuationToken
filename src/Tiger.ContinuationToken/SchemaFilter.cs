@@ -1,7 +1,7 @@
 ﻿// <copyright file="SchemaFilter.cs" company="Cimpress, Inc.">
-//   Copyright 2018 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -14,7 +14,8 @@
 //   limitations under the License.
 // </copyright>
 
-using Swashbuckle.AspNetCore.Swagger;
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Tiger.ContinuationToken
@@ -22,11 +23,12 @@ namespace Tiger.ContinuationToken
     /// <summary>
     /// Modifies the OpenAPI schema for the <see cref="ContinuationToken{TData}"/> struct.
     /// </summary>
+    [SuppressMessage("Microsoft.Style", "CA1812", Justification = "Resolved by dependency injection.")]
     sealed class SchemaFilter
         : ISchemaFilter
     {
         /// <inheritdoc/>
-        void ISchemaFilter.Apply(Schema schema, SchemaFilterContext context)
+        void ISchemaFilter.Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             schema.Type = "string";
 

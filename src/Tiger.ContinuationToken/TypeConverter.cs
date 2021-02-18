@@ -1,7 +1,7 @@
 ﻿// <copyright file="TypeConverter.cs" company="Cimpress, Inc.">
-//   Copyright 2018 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -16,6 +16,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tiger.ContinuationToken
 {
@@ -25,8 +26,9 @@ namespace Tiger.ContinuationToken
     /// <remarks><para>
     /// Convinces Swashbuckle that this type can be converted from a <see cref="string"/>.
     /// </para></remarks>
+    [SuppressMessage("Microsoft.Style", "CA1812", Justification = "Resolved by reflection.")]
     sealed class TypeConverter
-            : System.ComponentModel.TypeConverter
+        : System.ComponentModel.TypeConverter
     {
         /// <inheritdoc/>
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) =>
