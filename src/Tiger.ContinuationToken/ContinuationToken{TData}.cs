@@ -1,7 +1,7 @@
 // <copyright file="ContinuationToken{TData}.cs" company="Cimpress, Inc.">
-//   Copyright 2018 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -17,10 +17,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using JetBrains.Annotations;
 using Swashbuckle.AspNetCore.Annotations;
 using Tiger.Types;
-using static System.StringComparison;
+using static System.StringComparer;
 
 namespace Tiger.ContinuationToken
 {
@@ -30,6 +29,7 @@ namespace Tiger.ContinuationToken
     [SwaggerSchemaFilter(typeof(SchemaFilter))]
     public readonly struct ContinuationToken<TData>
         : IEquatable<ContinuationToken<TData>>
+        where TData : notnull
     {
         /// <summary>Gets the empty continuation token.</summary>
         public static readonly ContinuationToken<TData> Empty;
@@ -37,17 +37,16 @@ namespace Tiger.ContinuationToken
         /// <summary>Initializes a new instance of the <see cref="ContinuationToken{TData}"/> struct.</summary>
         /// <param name="value">The value.</param>
         /// <param name="opaqueValue">The original, opaque value.</param>
-        public ContinuationToken(TData value, [NotNull] string opaqueValue)
+        public ContinuationToken(TData value, string opaqueValue)
         {
             Value = value;
-            OpaqueValue = opaqueValue ?? throw new ArgumentNullException(nameof(opaqueValue));
+            OpaqueValue = opaqueValue;
         }
 
         /// <summary>Gets the decoded value.</summary>
         public Option<TData> Value { get; }
 
         /// <summary>Gets the original, opaque value.</summary>
-        [CanBeNull]
         public string OpaqueValue { get; }
 
         /// <summary>
@@ -73,28 +72,26 @@ namespace Tiger.ContinuationToken
             !(left == right);
 
         /// <inheritdoc/>
-        public override bool Equals(object obj) =>
+        public override bool Equals(object? obj) =>
             obj is ContinuationToken<TData> continuationToken && Equals(continuationToken);
 
         /// <inheritdoc/>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hash = 17;
-                hash = (hash * 23) + Value.GetHashCode();
-                return (hash * 23) + OpaqueValue?.GetHashCode() ?? 0;
-            }
+            var hash = default(HashCode);
+            hash.Add(Value);
+            hash.Add(OpaqueValue, Ordinal);
+            return hash.ToHashCode();
         }
 
         /// <inheritdoc/>
         public override string ToString() => Value.Match(
             none: string.Empty,
-            some: v => v.ToString());
+            some: v => v.ToString() ?? string.Empty);
 
         /// <inheritdoc/>
         public bool Equals(ContinuationToken<TData> other) =>
             Option.Equals(Value, other.Value, EqualityComparer<TData>.Default)
-            && string.Equals(OpaqueValue, other.OpaqueValue, Ordinal);
+            && Ordinal.Equals(OpaqueValue, other.OpaqueValue);
     }
 }

@@ -1,7 +1,7 @@
 ﻿// <copyright file="ModelBinderProvider.cs" company="Cimpress, Inc.">
-//   Copyright 2018 Cimpress, Inc.
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -25,7 +25,7 @@ namespace Tiger.ContinuationToken
         : IModelBinderProvider
     {
         /// <inheritdoc/>
-        IModelBinder IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
+        IModelBinder? IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
         {
             if (!context.Metadata.ModelType.IsGenericType)
             {
