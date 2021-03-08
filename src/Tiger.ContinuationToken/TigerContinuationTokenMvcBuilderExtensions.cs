@@ -1,7 +1,7 @@
-﻿// <copyright file="ContinuationTokenMvcBuilderExtensions.cs" company="Cimpress, Inc.">
-//   Copyright 2018 Cimpress, Inc.
+﻿// <copyright file="TigerContinuationTokenMvcBuilderExtensions.cs" company="Cimpress, Inc.">
+//   Copyright 2020 Cimpress, Inc.
 //
-//   Licensed under the Apache License, Version 2.0 (the "License");
+//   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
 //
@@ -14,7 +14,7 @@
 //   limitations under the License.
 // </copyright>
 
-using JetBrains.Annotations;
+using System;
 using Tiger.ContinuationToken;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -22,15 +22,19 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// Extensions to the functionality <see cref="IMvcBuilder"/> for <see cref="ContinuationToken{TData}"/>.
     /// </summary>
-    public static class ContinuationTokenMvcBuilderExtensions
+    public static class TigerContinuationTokenMvcBuilderExtensions
     {
         /// <summary>Adds the services necessary for proper functionality of <see cref="ContinuationToken{TData}"/>.</summary>
         /// <param name="builder">The application's MVC builder.</param>
         /// <returns>The modified builder.</returns>
-        [NotNull]
-        public static IMvcBuilder AddContinuationTokens([NotNull] this IMvcBuilder builder)
+        public static IMvcBuilder AddContinuationTokens(this IMvcBuilder builder)
         {
-            builder.Services
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            _ = builder.Services
                 .AddTransient(typeof(IEncryption<>), typeof(DataProtectorEncryption<>))
                 .AddDataProtection();
 
