@@ -1,5 +1,5 @@
-﻿// <copyright file="RoundTripDateTimeOffsetConverter.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="RoundTripDateTimeOffsetConverter.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using System.ComponentModel;
 using System.Globalization;
 
 namespace Tiger.ContinuationToken
@@ -28,10 +26,10 @@ namespace Tiger.ContinuationToken
         : DateTimeOffsetConverter
     {
         /// <inheritdoc/>
-        public override object ConvertTo(
-            ITypeDescriptorContext context,
-            CultureInfo culture,
-            object value,
+        public override object? ConvertTo(
+            ITypeDescriptorContext? context,
+            CultureInfo? culture,
+            object? value,
             Type destinationType) => destinationType == typeof(string) && value is DateTimeOffset dto
                 ? dto.ToString("O", culture)
                 : base.ConvertTo(context, culture, value, destinationType);

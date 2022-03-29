@@ -1,5 +1,5 @@
-﻿// <copyright file="ModelBinderProvider.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="ModelBinderProvider.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
 //   limitations under the License.
 // </copyright>
 
-using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace Tiger.ContinuationToken
 {
     /// <summary>Provides an instance of <see cref="EncryptingModelBinder{TData}"/>, if applicable.</summary>
-    public sealed class ModelBinderProvider
+    sealed class ModelBinderProvider
         : IModelBinderProvider
     {
         /// <inheritdoc/>

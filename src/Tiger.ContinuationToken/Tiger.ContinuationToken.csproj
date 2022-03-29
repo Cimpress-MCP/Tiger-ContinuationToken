@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Description>A model binder for encoded application continuation tokens.</Description>
     <Copyright>©Cimpress 2021</Copyright>
     <AssemblyTitle>Tiger Continuation Token</AssemblyTitle>
@@ -23,10 +22,20 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
 
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.0.7" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
     <PackageReference Include="Tiger.Types" Version="5.0.0" />
 
     <None Include="../../tiger_logo.png" Pack="true" PackagePath="" />
+
+    <Using Include="Microsoft.Extensions.Logging" />
+    <Using Include="Microsoft.Extensions.Logging.LogLevel" Static="true" />
+    <Using Include="System.ComponentModel" />
+    <Using Include="System.Runtime.CompilerServices" />
+    <Using Include="System.Security.Cryptography" />
+
+    <AssemblyAttribute Include="InternalsVisibleTo">
+      <_Parameter1>Test</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

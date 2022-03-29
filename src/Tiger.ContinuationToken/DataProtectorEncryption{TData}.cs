@@ -1,5 +1,5 @@
-﻿// <copyright file="DataProtectorEncryption{TData}.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="DataProtectorEncryption{TData}.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using System.ComponentModel;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Logging;
 
 namespace Tiger.ContinuationToken
 {
     /// <summary>Provides symmetric encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
     /// <typeparam name="TData">The type on which to perform operations.</typeparam>
-    public sealed class DataProtectorEncryption<TData>
+    sealed partial class DataProtectorEncryption<TData>
         : IEncryption<TData>
         where TData : notnull
     {
@@ -55,45 +51,53 @@ namespace Tiger.ContinuationToken
             IDataProtectionProvider dataProtectionProvider,
             ILogger<DataProtectorEncryption<TData>> logger)
         {
-            if (dataProtectionProvider is null)
-            {
-                throw new ArgumentNullException(nameof(dataProtectionProvider));
-            }
+            ArgumentNullException.ThrowIfNull(dataProtectionProvider);
 
             _dataProtector = dataProtectionProvider.CreateProtector("Tiger.DataProtectorEncryption`1.v3");
             _logger = logger;
         }
 
         /// <inheritdoc/>
-        TData IEncryption<TData>.Decrypt(string ciphertext)
+        TData? IEncryption<TData>.Decrypt(string? ciphertext)
         {
-            var plaintext = _dataProtector.Unprotect(ciphertext);
+            if (ciphertext is not { Length: > 0 } ct)
+            {
+                return default;
+            }
+
+            var plaintext = _dataProtector.Unprotect(ct);
             try
             {
-                return (TData)s_typeConverter.ConvertFromInvariantString(plaintext);
+                return (TData?)s_typeConverter.ConvertFromInvariantString(plaintext);
             }
             catch (NotSupportedException nse)
             {
-                _logger.FromTokenFailed(typeof(TData), nse);
+                FromTokenFailed(typeof(TData), nse);
                 throw new CryptographicException("The decrypted value cannot be converted into the provided type.", nse);
             }
         }
 
         /// <inheritdoc/>
-        string IEncryption<TData>.Encrypt(TData value)
+        string? IEncryption<TData>.Encrypt(TData? value)
         {
-            string plaintext;
+            string? plaintext;
             try
             {
                 plaintext = s_typeConverter.ConvertToInvariantString(value);
             }
             catch (NotSupportedException nse)
             {
-                _logger.ToTokenFailed(typeof(TData), nse);
+                ToTokenFailed(typeof(TData), nse);
                 throw new CryptographicException("The value cannot be converted into a string for encryption.", nse);
             }
 
-            return _dataProtector.Protect(plaintext);
+            return plaintext is { Length: > 0 } pt ? _dataProtector.Protect(pt) : null;
         }
+
+        [LoggerMessage(eventId: 1, Error, "Can't convert a value of type {Type} into a token!")]
+        partial void ToTokenFailed(Type type, NotSupportedException nse);
+
+        [LoggerMessage(eventId: 2, Error, "Can't convert a token into a value of type {Type}!")]
+        partial void FromTokenFailed(Type type, NotSupportedException nse);
     }
 }
