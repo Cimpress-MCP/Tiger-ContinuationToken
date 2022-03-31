@@ -17,23 +17,22 @@
 using Swashbuckle.AspNetCore.Annotations;
 using Tiger.Types;
 
-namespace Tiger.ContinuationToken
-{
-    /// <summary>Represents an encrypted continuation point of a scan of a dataset.</summary>
-    /// <typeparam name="TData">The type of the underlying data.</typeparam>
-    /// <param name="Value">The decoded value.</param>
-    /// <param name="OpaqueValue">The original, opaue value.</param>
-    [TypeConverter(typeof(TypeConverter))]
-    [SwaggerSchemaFilter(typeof(SchemaFilter))]
-    public readonly record struct ContinuationToken<TData>(Option<TData> Value, string OpaqueValue)
-        where TData : notnull
-    {
-        /// <summary>Gets the empty continuation token.</summary>
-        public static readonly ContinuationToken<TData> Empty;
+namespace Tiger.ContinuationToken;
 
-        /// <inheritdoc/>
-        public override string ToString() => Value.Match(
-            none: string.Empty,
-            some: v => v.ToString() ?? string.Empty);
-    }
+/// <summary>Represents an encrypted continuation point of a scan of a dataset.</summary>
+/// <typeparam name="TData">The type of the underlying data.</typeparam>
+/// <param name="Value">The decoded value.</param>
+/// <param name="OpaqueValue">The original, opaue value.</param>
+[TypeConverter(typeof(TypeConverter))]
+[SwaggerSchemaFilter(typeof(SchemaFilter))]
+public readonly record struct ContinuationToken<TData>(Option<TData> Value, string OpaqueValue)
+    where TData : notnull
+{
+    /// <summary>Gets the empty continuation token.</summary>
+    public static readonly ContinuationToken<TData> Empty;
+
+    /// <inheritdoc/>
+    public override string ToString() => Value.Match(
+        none: string.Empty,
+        some: v => v.ToString() ?? string.Empty);
 }

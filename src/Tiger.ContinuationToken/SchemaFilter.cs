@@ -17,24 +17,23 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Tiger.ContinuationToken
-{
-    /// <summary>
-    /// Modifies the OpenAPI schema for the <see cref="ContinuationToken{TData}"/> struct.
-    /// </summary>
-    sealed class SchemaFilter
-        : ISchemaFilter
-    {
-        /// <inheritdoc/>
-        void ISchemaFilter.Apply(OpenApiSchema schema, SchemaFilterContext context)
-        {
-            schema.Type = "string";
+namespace Tiger.ContinuationToken;
 
-            /* note(cosborn)
-             * I don't think that this is a real format, but it should convince humans
-             * that this isn't a thing that they can get data from by parsing or whatnot.
-             */
-            schema.Format = "opaque";
-        }
+/// <summary>
+/// Modifies the OpenAPI schema for the <see cref="ContinuationToken{TData}"/> struct.
+/// </summary>
+sealed class SchemaFilter
+    : ISchemaFilter
+{
+    /// <inheritdoc/>
+    void ISchemaFilter.Apply(OpenApiSchema schema, SchemaFilterContext context)
+    {
+        schema.Type = "string";
+
+        /* note(cosborn)
+         * I don't think that this is a real format, but it should convince humans
+         * that this isn't a thing that they can get data from by parsing or whatnot.
+         */
+        schema.Format = "opaque";
     }
 }

@@ -16,22 +16,21 @@
 
 using System.Globalization;
 
-namespace Tiger.ContinuationToken
+namespace Tiger.ContinuationToken;
+
+/// <summary>
+/// Provides a type converter to convert <see cref="DateTimeOffset"/>
+/// objects to and from various other representations.
+/// </summary>
+sealed class RoundTripDateTimeOffsetConverter
+    : DateTimeOffsetConverter
 {
-    /// <summary>
-    /// Provides a type converter to convert <see cref="DateTimeOffset"/>
-    /// objects to and from various other representations.
-    /// </summary>
-    sealed class RoundTripDateTimeOffsetConverter
-        : DateTimeOffsetConverter
-    {
-        /// <inheritdoc/>
-        public override object? ConvertTo(
-            ITypeDescriptorContext? context,
-            CultureInfo? culture,
-            object? value,
-            Type destinationType) => destinationType == typeof(string) && value is DateTimeOffset dto
-                ? dto.ToString("O", culture)
-                : base.ConvertTo(context, culture, value, destinationType);
-    }
+    /// <inheritdoc/>
+    public override object? ConvertTo(
+        ITypeDescriptorContext? context,
+        CultureInfo? culture,
+        object? value,
+        Type destinationType) => destinationType == typeof(string) && value is DateTimeOffset dto
+            ? dto.ToString("O", culture)
+            : base.ConvertTo(context, culture, value, destinationType);
 }

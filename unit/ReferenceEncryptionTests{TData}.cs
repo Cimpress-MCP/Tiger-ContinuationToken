@@ -14,27 +14,26 @@
 //   limitations under the License.
 // </copyright>
 
-namespace Test
+namespace Test;
+
+[Properties(QuietOnSuccess = true)]
+public abstract class ReferenceEncryptionTests<TData>
+    where TData : class
 {
-    [Properties(QuietOnSuccess = true)]
-    public abstract class ReferenceEncryptionTests<TData>
-        where TData : class
+    [Property(DisplayName = "References can round-trip through encryption.")]
+    public void RoundTripEncryption(NonNull<TData> datum)
     {
-        [Property(DisplayName = "References can round-trip through encryption.")]
-        public void RoundTripEncryption(NonNull<TData> datum)
-        {
-            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
-                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
-                NullLogger<DataProtectorEncryption<TData>>.Instance);
+        IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+            new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+            NullLogger<DataProtectorEncryption<TData>>.Instance);
 
-            var actual = sut.Decrypt(sut.Encrypt(datum.Get));
+        var actual = sut.Decrypt(sut.Encrypt(datum.Get));
 
-            Assert.Equal(datum.Get, actual);
-        }
+        Assert.Equal(datum.Get, actual);
     }
+}
 
-    public sealed class StringEncryptionTests
-        : ReferenceEncryptionTests<string>
-    {
-    }
+public sealed class StringEncryptionTests
+    : ReferenceEncryptionTests<string>
+{
 }

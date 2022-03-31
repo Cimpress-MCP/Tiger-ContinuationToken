@@ -17,36 +17,35 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace Tiger.ContinuationToken
+namespace Tiger.ContinuationToken;
+
+/// <summary>Provides an instance of <see cref="EncryptingModelBinder{TData}"/>, if applicable.</summary>
+sealed class ModelBinderProvider
+    : IModelBinderProvider
 {
-    /// <summary>Provides an instance of <see cref="EncryptingModelBinder{TData}"/>, if applicable.</summary>
-    sealed class ModelBinderProvider
-        : IModelBinderProvider
+    /// <inheritdoc/>
+    IModelBinder? IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
     {
-        /// <inheritdoc/>
-        IModelBinder? IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
+        if (!context.Metadata.ModelType.IsGenericType)
         {
-            if (!context.Metadata.ModelType.IsGenericType)
-            {
-                return null;
-            }
-
-            var genericTypeDefinition = context.Metadata.ModelType.GetGenericTypeDefinition();
-            if (genericTypeDefinition != typeof(ContinuationToken<>))
-            {
-                return null;
-            }
-
-            var underlyingType = context.Metadata.ModelType.GenericTypeArguments[0];
-            var typeConverter = TypeDescriptor.GetConverter(underlyingType);
-            if (!typeConverter.CanConvertFrom(typeof(string)))
-            {
-                return null;
-            }
-
-            var modelBinderType = typeof(EncryptingModelBinder<>).MakeGenericType(underlyingType);
-
-            return new BinderTypeModelBinder(modelBinderType);
+            return null;
         }
+
+        var genericTypeDefinition = context.Metadata.ModelType.GetGenericTypeDefinition();
+        if (genericTypeDefinition != typeof(ContinuationToken<>))
+        {
+            return null;
+        }
+
+        var underlyingType = context.Metadata.ModelType.GenericTypeArguments[0];
+        var typeConverter = TypeDescriptor.GetConverter(underlyingType);
+        if (!typeConverter.CanConvertFrom(typeof(string)))
+        {
+            return null;
+        }
+
+        var modelBinderType = typeof(EncryptingModelBinder<>).MakeGenericType(underlyingType);
+
+        return new BinderTypeModelBinder(modelBinderType);
     }
 }

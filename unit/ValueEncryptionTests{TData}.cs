@@ -14,42 +14,41 @@
 //   limitations under the License.
 // </copyright>
 
-namespace Test
+namespace Test;
+
+[Properties(QuietOnSuccess = true)]
+public abstract class ValueEncryptionTests<TData>
+    where TData : struct
 {
-    [Properties(QuietOnSuccess = true)]
-    public abstract class ValueEncryptionTests<TData>
-        where TData : struct
+    [Property(DisplayName = "Values can round-trip through encryption.")]
+    public void RoundTripEncryption(TData datum)
     {
-        [Property(DisplayName = "Values can round-trip through encryption.")]
-        public void RoundTripEncryption(TData datum)
-        {
-            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
-                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
-                NullLogger<DataProtectorEncryption<TData>>.Instance);
+        IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+            new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+            NullLogger<DataProtectorEncryption<TData>>.Instance);
 
-            var actual = sut.Decrypt(sut.Encrypt(datum));
+        var actual = sut.Decrypt(sut.Encrypt(datum));
 
-            Assert.Equal(datum, actual);
-        }
+        Assert.Equal(datum, actual);
     }
+}
 
-    public sealed class DateTimeOffsetEncryptionTests
-        : ValueEncryptionTests<DateTimeOffset>
-    {
-    }
+public sealed class DateTimeOffsetEncryptionTests
+    : ValueEncryptionTests<DateTimeOffset>
+{
+}
 
-    public sealed class Int32EncryptionTests
-        : ValueEncryptionTests<int>
-    {
-    }
+public sealed class Int32EncryptionTests
+    : ValueEncryptionTests<int>
+{
+}
 
-    public sealed class Int64EncryptionTests
-        : ValueEncryptionTests<long>
-    {
-    }
+public sealed class Int64EncryptionTests
+    : ValueEncryptionTests<long>
+{
+}
 
-    public sealed class GuidEncryptionTests
-        : ValueEncryptionTests<Guid>
-    {
-    }
+public sealed class GuidEncryptionTests
+    : ValueEncryptionTests<Guid>
+{
 }

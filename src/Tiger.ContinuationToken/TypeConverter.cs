@@ -14,19 +14,18 @@
 //   limitations under the License.
 // </copyright>
 
-namespace Tiger.ContinuationToken
+namespace Tiger.ContinuationToken;
+
+/// <summary>
+/// Converts values of the <see cref="ContinuationToken{TData}"/> struct to and from other representations.
+/// </summary>
+/// <remarks><para>
+/// Convinces Swashbuckle that this type can be converted from a <see cref="string"/>.
+/// </para></remarks>
+sealed class TypeConverter
+    : System.ComponentModel.TypeConverter
 {
-    /// <summary>
-    /// Converts values of the <see cref="ContinuationToken{TData}"/> struct to and from other representations.
-    /// </summary>
-    /// <remarks><para>
-    /// Convinces Swashbuckle that this type can be converted from a <see cref="string"/>.
-    /// </para></remarks>
-    sealed class TypeConverter
-        : System.ComponentModel.TypeConverter
-    {
-        /// <inheritdoc/>
-        public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
-            sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-    }
+    /// <inheritdoc/>
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
+        sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
 }

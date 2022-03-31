@@ -16,24 +16,23 @@
 
 using Tiger.ContinuationToken;
 
-namespace Microsoft.Extensions.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection;
+
+/// <summary>Extensions to the functionality <see cref="IMvcBuilder"/> for <see cref="ContinuationToken{TData}"/>.</summary>
+public static class TigerContinuationTokenMvcBuilderExtensions
 {
-    /// <summary>Extensions to the functionality <see cref="IMvcBuilder"/> for <see cref="ContinuationToken{TData}"/>.</summary>
-    public static class TigerContinuationTokenMvcBuilderExtensions
+    /// <summary>Adds the services necessary for proper functionality of <see cref="ContinuationToken{TData}"/>.</summary>
+    /// <param name="builder">The application's MVC builder.</param>
+    /// <returns>The modified builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
+    public static IMvcBuilder AddContinuationTokens(this IMvcBuilder builder)
     {
-        /// <summary>Adds the services necessary for proper functionality of <see cref="ContinuationToken{TData}"/>.</summary>
-        /// <param name="builder">The application's MVC builder.</param>
-        /// <returns>The modified builder.</returns>
-        /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
-        public static IMvcBuilder AddContinuationTokens(this IMvcBuilder builder)
-        {
-            ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(builder);
 
-            _ = builder.Services
-                .AddTransient(typeof(IEncryption<>), typeof(DataProtectorEncryption<>))
-                .AddDataProtection();
+        _ = builder.Services
+            .AddTransient(typeof(IEncryption<>), typeof(DataProtectorEncryption<>))
+            .AddDataProtection();
 
-            return builder.AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new ModelBinderProvider()));
-        }
+        return builder.AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new ModelBinderProvider()));
     }
 }

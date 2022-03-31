@@ -14,24 +14,23 @@
 //   limitations under the License.
 // </copyright>
 
-namespace Tiger.ContinuationToken
-{
-    /// <summary>Provides encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
-    /// <typeparam name="TData">The type on which to perform operations.</typeparam>
-    public interface IEncryption<TData>
-        where TData : notnull
-    {
-        /// <summary>Decrypts a string to a continuation token value.</summary>
-        /// <param name="ciphertext">The Base64-encoded value to decrypt.</param>
-        /// <returns>The decrypted value.</returns>
-        /// <exception cref="CryptographicException">The decryption operation has failed.</exception>
-        [return: NotNullIfNotNull("ciphertext")]
-        TData? Decrypt(string ciphertext);
+namespace Tiger.ContinuationToken;
 
-        /// <summary>Encrypts a continuation token value to a string.</summary>
-        /// <param name="value">The value to convert.</param>
-        /// <returns>The Base64-encoded encrypted value.</returns>
-        [return: NotNullIfNotNull("value")]
-        string? Encrypt(TData value);
-    }
+/// <summary>Provides encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
+/// <typeparam name="TData">The type on which to perform operations.</typeparam>
+public interface IEncryption<TData>
+    where TData : notnull
+{
+    /// <summary>Decrypts a string to a continuation token value.</summary>
+    /// <param name="ciphertext">The Base64-encoded value to decrypt.</param>
+    /// <returns>The decrypted value.</returns>
+    /// <exception cref="CryptographicException">The decryption operation has failed.</exception>
+    [return: NotNullIfNotNull("ciphertext")]
+    TData? Decrypt(string ciphertext);
+
+    /// <summary>Encrypts a continuation token value to a string.</summary>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The Base64-encoded encrypted value.</returns>
+    [return: NotNullIfNotNull("value")]
+    string? Encrypt(TData value);
 }
