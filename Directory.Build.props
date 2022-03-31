@@ -1,22 +1,26 @@
 <Project>
   <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
     <Copyright>©Cimpress 2021</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Nullable>enable</Nullable>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <AnalysisMode>All</AnalysisMode>
     <DebugType>portable</DebugType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <Features>IOperation</Features> 
+    <ImplicitUsings>true</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Roslynator.Analyzers" Version="3.1.0" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" Version="4.0.2" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406" PrivateAssets="all" />
 
-    <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" />
+    <Using Include="System.Diagnostics.CodeAnalysis" />
+
+    <AssemblyAttribute Include="CLSCompliantAttribute">
+      <_Parameter1>false</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 </Project>

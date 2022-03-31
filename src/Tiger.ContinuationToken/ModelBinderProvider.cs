@@ -1,5 +1,5 @@
-﻿// <copyright file="ModelBinderProvider.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="ModelBinderProvider.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,40 +14,38 @@
 //   limitations under the License.
 // </copyright>
 
-using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace Tiger.ContinuationToken
+namespace Tiger.ContinuationToken;
+
+/// <summary>Provides an instance of <see cref="EncryptingModelBinder{TData}"/>, if applicable.</summary>
+sealed class ModelBinderProvider
+    : IModelBinderProvider
 {
-    /// <summary>Provides an instance of <see cref="EncryptingModelBinder{TData}"/>, if applicable.</summary>
-    public sealed class ModelBinderProvider
-        : IModelBinderProvider
+    /// <inheritdoc/>
+    IModelBinder? IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
     {
-        /// <inheritdoc/>
-        IModelBinder? IModelBinderProvider.GetBinder(ModelBinderProviderContext context)
+        if (!context.Metadata.ModelType.IsGenericType)
         {
-            if (!context.Metadata.ModelType.IsGenericType)
-            {
-                return null;
-            }
-
-            var genericTypeDefinition = context.Metadata.ModelType.GetGenericTypeDefinition();
-            if (genericTypeDefinition != typeof(ContinuationToken<>))
-            {
-                return null;
-            }
-
-            var underlyingType = context.Metadata.ModelType.GenericTypeArguments[0];
-            var typeConverter = TypeDescriptor.GetConverter(underlyingType);
-            if (!typeConverter.CanConvertFrom(typeof(string)))
-            {
-                return null;
-            }
-
-            var modelBinderType = typeof(EncryptingModelBinder<>).MakeGenericType(underlyingType);
-
-            return new BinderTypeModelBinder(modelBinderType);
+            return null;
         }
+
+        var genericTypeDefinition = context.Metadata.ModelType.GetGenericTypeDefinition();
+        if (genericTypeDefinition != typeof(ContinuationToken<>))
+        {
+            return null;
+        }
+
+        var underlyingType = context.Metadata.ModelType.GenericTypeArguments[0];
+        var typeConverter = TypeDescriptor.GetConverter(underlyingType);
+        if (!typeConverter.CanConvertFrom(typeof(string)))
+        {
+            return null;
+        }
+
+        var modelBinderType = typeof(EncryptingModelBinder<>).MakeGenericType(underlyingType);
+
+        return new BinderTypeModelBinder(modelBinderType);
     }
 }

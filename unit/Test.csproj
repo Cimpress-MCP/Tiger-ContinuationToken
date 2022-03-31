@@ -1,20 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    
     <PackageReference Include="FsCheck.Xunit" Version="3.0.0-alpha5" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="xunit" Version="2.4.1" />
 
-    <PackageReference Include="coverlet.collector" Version="3.0.2" PrivateAssets="all" />
-    <PackageReference Include="JunitXml.TestLogger" Version="2.1.81" PrivateAssets="all" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" PrivateAssets="all" />
+    <PackageReference Include="JunitXml.TestLogger" Version="3.0.110" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
 
     <ProjectReference Include="..\src\Tiger.ContinuationToken\Tiger.ContinuationToken.csproj" />
+
+    <Using Include="FsCheck" />
+    <Using Include="FsCheck.Xunit" />
+    <Using Include="Microsoft.AspNetCore.DataProtection" />
+    <Using Include="Microsoft.Extensions.Logging.Abstractions" />
+    <Using Include="Tiger.ContinuationToken" />
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

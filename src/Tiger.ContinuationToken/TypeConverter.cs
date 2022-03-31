@@ -1,5 +1,5 @@
-﻿// <copyright file="TypeConverter.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="TypeConverter.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+namespace Tiger.ContinuationToken;
 
-namespace Tiger.ContinuationToken
+/// <summary>
+/// Converts values of the <see cref="ContinuationToken{TData}"/> struct to and from other representations.
+/// </summary>
+/// <remarks><para>
+/// Convinces Swashbuckle that this type can be converted from a <see cref="string"/>.
+/// </para></remarks>
+sealed class TypeConverter
+    : System.ComponentModel.TypeConverter
 {
-    /// <summary>
-    /// Converts values of the <see cref="ContinuationToken{TData}"/> struct to and from other representations.
-    /// </summary>
-    /// <remarks><para>
-    /// Convinces Swashbuckle that this type can be converted from a <see cref="string"/>.
-    /// </para></remarks>
-    [SuppressMessage("Microsoft.Style", "CA1812", Justification = "Resolved by reflection.")]
-    sealed class TypeConverter
-        : System.ComponentModel.TypeConverter
-    {
-        /// <inheritdoc/>
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType) =>
-            sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-    }
+    /// <inheritdoc/>
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) =>
+        sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
 }

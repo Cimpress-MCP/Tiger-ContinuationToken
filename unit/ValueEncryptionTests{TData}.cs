@@ -1,5 +1,5 @@
 // <copyright file="ValueEncryptionTests{TData}.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,50 +14,41 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using FsCheck;
-using FsCheck.Xunit;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Tiger.ContinuationToken;
-using Xunit;
+namespace Test;
 
-namespace Test
+[Properties(QuietOnSuccess = true)]
+public abstract class ValueEncryptionTests<TData>
+    where TData : struct
 {
-    [Properties(QuietOnSuccess = true)]
-    public abstract class ValueEncryptionTests<TData>
-        where TData : struct
+    [Property(DisplayName = "Values can round-trip through encryption.")]
+    public void RoundTripEncryption(TData datum)
     {
-        [Property(DisplayName = "Values can round-trip through encryption.")]
-        public void RoundTripEncryption(TData datum)
-        {
-            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
-                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
-                NullLogger<DataProtectorEncryption<TData>>.Instance);
+        IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+            new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+            NullLogger<DataProtectorEncryption<TData>>.Instance);
 
-            var actual = sut.Decrypt(sut.Encrypt(datum));
+        var actual = sut.Decrypt(sut.Encrypt(datum));
 
-            Assert.Equal(datum, actual);
-        }
+        Assert.Equal(datum, actual);
     }
+}
 
-    public sealed class DateTimeOffsetEncryptionTests
-        : ValueEncryptionTests<DateTimeOffset>
-    {
-    }
+public sealed class DateTimeOffsetEncryptionTests
+    : ValueEncryptionTests<DateTimeOffset>
+{
+}
 
-    public sealed class Int32EncryptionTests
-        : ValueEncryptionTests<int>
-    {
-    }
+public sealed class Int32EncryptionTests
+    : ValueEncryptionTests<int>
+{
+}
 
-    public sealed class Int64EncryptionTests
-        : ValueEncryptionTests<long>
-    {
-    }
+public sealed class Int64EncryptionTests
+    : ValueEncryptionTests<long>
+{
+}
 
-    public sealed class GuidEncryptionTests
-        : ValueEncryptionTests<Guid>
-    {
-    }
+public sealed class GuidEncryptionTests
+    : ValueEncryptionTests<Guid>
+{
 }

@@ -1,5 +1,5 @@
-﻿// <copyright file="IEncryption.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+// <copyright file="IEncryption.cs" company="Cimpress, Inc.">
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,25 +14,23 @@
 //   limitations under the License.
 // </copyright>
 
-using System;
-using System.Security.Cryptography;
+namespace Tiger.ContinuationToken;
 
-namespace Tiger.ContinuationToken
+/// <summary>Provides encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
+/// <typeparam name="TData">The type on which to perform operations.</typeparam>
+public interface IEncryption<TData>
+    where TData : notnull
 {
-    /// <summary>Provides encryption and decryption utilities for <see cref="ContinuationToken{TData}"/>.</summary>
-    /// <typeparam name="TData">The type on which to perform operations.</typeparam>
-    public interface IEncryption<TData>
-        where TData : notnull
-    {
-        /// <summary>Decrypts a string to a continuation token value.</summary>
-        /// <param name="ciphertext">The Base64-encoded value to decrypt.</param>
-        /// <returns>The decrypted value.</returns>
-        /// <exception cref="CryptographicException">The decryption operation has failed.</exception>
-        TData Decrypt(string ciphertext);
+    /// <summary>Decrypts a string to a continuation token value.</summary>
+    /// <param name="ciphertext">The Base64-encoded value to decrypt.</param>
+    /// <returns>The decrypted value.</returns>
+    /// <exception cref="CryptographicException">The decryption operation has failed.</exception>
+    [return: NotNullIfNotNull("ciphertext")]
+    TData? Decrypt(string ciphertext);
 
-        /// <summary>Encrypts a continuation token value to a string.</summary>
-        /// <param name="value">The value to convert.</param>
-        /// <returns>The Base64-encoded encrypted value.</returns>
-        string Encrypt(TData value);
-    }
+    /// <summary>Encrypts a continuation token value to a string.</summary>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The Base64-encoded encrypted value.</returns>
+    [return: NotNullIfNotNull("value")]
+    string? Encrypt(TData value);
 }

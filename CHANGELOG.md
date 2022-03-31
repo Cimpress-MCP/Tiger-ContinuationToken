@@ -1,3 +1,7 @@
+## What's new in 4.0.0 (Released 2022-03-31)
+
+* The library has been upgraded for .NET 6.
+
 ## What's new in 3.0.0 (Released 2021-02-19)
 
 * The library has grown compatiblity for modern target frameworks.
