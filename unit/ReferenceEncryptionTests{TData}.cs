@@ -1,5 +1,5 @@
 // <copyright file="ReferenceEncryptionTests{TData}.cs" company="Cimpress, Inc.">
-//   Copyright 2020 Cimpress, Inc.
+//   Copyright 2020–2022 Cimpress, Inc.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License") –
 //   you may not use this file except in compliance with the License.
@@ -14,34 +14,26 @@
 //   limitations under the License.
 // </copyright>
 
-using FsCheck;
-using FsCheck.Xunit;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Tiger.ContinuationToken;
-using Xunit;
+namespace Test;
 
-namespace Test
+[Properties(QuietOnSuccess = true)]
+public abstract class ReferenceEncryptionTests<TData>
+    where TData : class
 {
-    [Properties(QuietOnSuccess = true)]
-    public abstract class ReferenceEncryptionTests<TData>
-        where TData : class
+    [Property(DisplayName = "References can round-trip through encryption.")]
+    public void RoundTripEncryption(NonNull<TData> datum)
     {
-        [Property(DisplayName = "References can round-trip through encryption.")]
-        public void RoundTripEncryption(NonNull<TData> datum)
-        {
-            IEncryption<TData> sut = new DataProtectorEncryption<TData>(
-                new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
-                NullLogger<DataProtectorEncryption<TData>>.Instance);
+        IEncryption<TData> sut = new DataProtectorEncryption<TData>(
+            new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
+            NullLogger<DataProtectorEncryption<TData>>.Instance);
 
-            var actual = sut.Decrypt(sut.Encrypt(datum.Get));
+        var actual = sut.Decrypt(sut.Encrypt(datum.Get));
 
-            Assert.Equal(datum.Get, actual);
-        }
+        Assert.Equal(datum.Get, actual);
     }
+}
 
-    public sealed class StringEncryptionTests
-        : ReferenceEncryptionTests<string>
-    {
-    }
+public sealed class StringEncryptionTests
+    : ReferenceEncryptionTests<string>
+{
 }
