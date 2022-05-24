@@ -1,3 +1,7 @@
+## What's new in 5.0.0 (Released 2022-??-??)
+
+* The library now defers to AWS KMS for cryptographic operations.
+
 ## What's new in 4.0.0 (Released 2022-03-31)
 
 * The library has been upgraded for .NET 6.

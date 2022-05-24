@@ -14,8 +14,6 @@
 //   limitations under the License.
 // </copyright>
 
-using Tiger.ContinuationToken;
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>Extensions to the functionality <see cref="IMvcBuilder"/> for <see cref="ContinuationToken{TData}"/>.</summary>
@@ -23,15 +21,35 @@ public static class TigerContinuationTokenMvcBuilderExtensions
 {
     /// <summary>Adds the services necessary for proper functionality of <see cref="ContinuationToken{TData}"/>.</summary>
     /// <param name="builder">The application's MVC builder.</param>
+    /// <param name="configSectionPath">The path to the configuration section by which to configure continuation token generation.</param>
     /// <returns>The modified builder.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="builder"/> is <see langword="null"/>.</exception>
-    public static IMvcBuilder AddContinuationTokens(this IMvcBuilder builder)
+    public static IMvcBuilder AddContinuationTokens(this IMvcBuilder builder, string configSectionPath = ContinuationTokenOptions.ContinuationToken)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
         _ = builder.Services
-            .AddTransient(typeof(IEncryption<>), typeof(DataProtectorEncryption<>))
-            .AddDataProtection();
+            .AddOptions<ContinuationTokenOptions>()
+            .BindConfiguration(configSectionPath)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+
+        _ = builder.Services
+            .AddSingleton(_ => AwsEncryptionSdkFactory.CreateDefaultAwsEncryptionSdk())
+            .AddSingleton(_ => AwsCryptographicMaterialProvidersFactory.CreateDefaultAwsCryptographicMaterialProviders())
+            .AddAWSService<IAmazonKeyManagementService>()
+            .AddScoped(p =>
+            {
+                var continuationTokenOpts = p.GetRequiredService<IOptions<ContinuationTokenOptions>>().Value;
+                var kmsClient = p.GetRequiredService<IAmazonKeyManagementService>();
+                var materialProviders = p.GetRequiredService<IAwsCryptographicMaterialProviders>();
+                return materialProviders.CreateAwsKmsKeyring(new()
+                {
+                    KmsClient = kmsClient,
+                    KmsKeyId = continuationTokenOpts.KmsKeyArn,
+                });
+            })
+            .AddTransient(typeof(IEncryption<>), typeof(AwsKmsEncryption<>));
 
         return builder.AddMvcOptions(o => o.ModelBinderProviders.Insert(0, new ModelBinderProvider()));
     }

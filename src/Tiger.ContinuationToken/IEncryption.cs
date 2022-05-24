@@ -32,5 +32,5 @@ public interface IEncryption<TData>
     /// <param name="value">The value to convert.</param>
     /// <returns>The Base64-encoded encrypted value.</returns>
     [return: NotNullIfNotNull("value")]
-    string? Encrypt(TData value);
+    string Encrypt(TData? value);
 }

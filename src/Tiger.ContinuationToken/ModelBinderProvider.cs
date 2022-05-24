@@ -14,7 +14,6 @@
 //   limitations under the License.
 // </copyright>
 
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace Tiger.ContinuationToken;

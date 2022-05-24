@@ -4,16 +4,16 @@
     <Description>A model binder for encoded application continuation tokens.</Description>
     <Copyright>©Cimpress 2021</Copyright>
     <AssemblyTitle>Tiger Continuation Token</AssemblyTitle>
-    <VersionPrefix>4.0.0</VersionPrefix>
+    <VersionPrefix>5.0.0</VersionPrefix>
     <Authors>cosborn@cimpress.com</Authors>
     <AssemblyName>Tiger.ContinuationToken</AssemblyName>
     <PackageId>Tiger.ContinuationToken</PackageId>
     <PackageTags>continuation token;continuation;token</PackageTags>
-    <PackageReleaseNotes><![CDATA[➟ Release 4.0.0
-⁃ The library has been upgraded for .NET 6.
+    <PackageReleaseNotes><![CDATA[➟ Release 5.0.0
+⁃ The library now defers to AWS KMS for cryptographic operations.
 
-➟ Release 3.0.0
-⁃ The library has grown compatiblity for modern target frameworks.
+➟ Release 4.0.0
+⁃ The library has been upgraded for .NET 6.
 ]]></PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -23,18 +23,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.0" />
+    <PackageReference Include="AWS.EncryptionSDK" Version="3.0.0" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.*" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.3.1" />
     <PackageReference Include="Tiger.Types" Version="5.0.0" />
 
     <None Include="../../tiger_logo.png" Pack="true" PackagePath="" />
 
+    <Using Include="Amazon.KeyManagementService" />
+    <Using Include="AWS.EncryptionSDK" />
+    <Using Include="AWS.EncryptionSDK.Core" />
+    <Using Include="Microsoft.AspNetCore.Mvc.ModelBinding" />
+    <Using Include="Microsoft.Extensions.Hosting" />
     <Using Include="Microsoft.Extensions.Logging" />
     <Using Include="Microsoft.Extensions.Logging.LogLevel" Static="true" />
+    <Using Include="Microsoft.Extensions.Options" />
     <Using Include="System.ComponentModel" />
+    <Using Include="System.ComponentModel.DataAnnotations" />
+    <Using Include="System.Globalization" />
     <Using Include="System.Runtime.CompilerServices" />
     <Using Include="System.Security.Cryptography" />
+    <Using Include="System.Text" />
+    <Using Include="Tiger.ContinuationToken" />
 
     <AssemblyAttribute Include="InternalsVisibleTo">
       <_Parameter1>Test</_Parameter1>
