@@ -46,6 +46,7 @@ public abstract class ValueEncryptionTests<TData>
                 EncryptionContext = new()
                 {
                     ["Environment"] = environmentName.Get,
+                    ["Purpose"] = "Tiger.ContinuationToken",
                 },
             });
         IEncryption<TData> sut = new AwsKmsEncryption<TData>(

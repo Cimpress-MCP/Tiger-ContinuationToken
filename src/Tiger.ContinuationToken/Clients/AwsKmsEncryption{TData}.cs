@@ -14,6 +14,9 @@
 //   limitations under the License.
 // </copyright>
 
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Tiger.ContinuationToken;
 
 /// <summary>
@@ -26,6 +29,8 @@ sealed partial class AwsKmsEncryption<TData>
     where TData : notnull
 {
     const string EnvironmentContextKey = "Environment";
+    const string PurposeContextKey = "Purpose";
+    const string PurposeContextValue = "Tiger.ContinuationToken";
 
     static readonly Encoding s_encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
@@ -43,21 +48,21 @@ sealed partial class AwsKmsEncryption<TData>
         ? new RoundTripDateTimeOffsetConverter()
         : TypeDescriptor.GetConverter(typeof(TData));
 
-    readonly IAwsEncryptionSdk _serde;
+    readonly IAwsEncryptionSdk _encryptionSdk;
     readonly IKeyring _keyring;
     readonly IHostEnvironment _env;
     readonly ILogger _logger;
 
     /// <summary>Initializes a new instance of the <see cref="AwsKmsEncryption{TData}"/> class.</summary>
-    /// <param name="serde">A KMS Encrypttion SDK client.</param>
+    /// <param name="encryptionSdk">A KMS Encryption SDK client.</param>
     /// <param name="keyring">The application's KMS keychain.</param>
     /// <param name="env">The environment in which the application is running.</param>
     /// <param name="logger">
     /// The appliation's logger, specialized for <see cref="AwsKmsEncryption{TData}"/>.
     /// </param>
-    public AwsKmsEncryption(IAwsEncryptionSdk serde, IKeyring keyring, IHostEnvironment env, ILogger<AwsKmsEncryption<TData>> logger)
+    public AwsKmsEncryption(IAwsEncryptionSdk encryptionSdk, IKeyring keyring, IHostEnvironment env, ILogger<AwsKmsEncryption<TData>> logger)
     {
-        _serde = serde;
+        _encryptionSdk = encryptionSdk;
         _keyring = keyring;
         _env = env;
         _logger = logger;
@@ -74,8 +79,8 @@ sealed partial class AwsKmsEncryption<TData>
         DecryptOutput decryptOutput;
         try
         {
-            using var stream = new MemoryStream(Convert.FromBase64String(ct));
-            decryptOutput = _serde.Decrypt(new()
+            using var stream = new MemoryStream(Convert.FromBase64String(Uri.UnescapeDataString(ct)));
+            decryptOutput = _encryptionSdk.Decrypt(new()
             {
                 Ciphertext = stream,
                 Keyring = _keyring,
@@ -87,11 +92,20 @@ sealed partial class AwsKmsEncryption<TData>
             throw new CryptographicException("The value cannot be decrypted.", aese);
         }
 
-        if (!decryptOutput.EncryptionContext.TryGetValue(EnvironmentContextKey, out var environmentContextValue)
-            || environmentContextValue != _env.EnvironmentName)
+        var zippedContext = new Dictionary<string, string>()
         {
-            IncorrectEncryptionContext(environmentContextValue);
-            throw new CryptographicException("The value cannot be decrypted.");
+            [EnvironmentContextKey] = _env.EnvironmentName,
+            [PurposeContextKey] = PurposeContextValue,
+        };
+
+        foreach (var (key, value) in zippedContext)
+        {
+            if (!decryptOutput.EncryptionContext.TryGetValue(key, out var contextValue)
+                || contextValue != value)
+            {
+                IncorrectEncryptionContext(key, contextValue);
+                throw new CryptographicException("The value cannot be decrypted.");
+            }
         }
 
         try
@@ -134,11 +148,12 @@ sealed partial class AwsKmsEncryption<TData>
         try
         {
             using var stream = new MemoryStream(s_encoding.GetBytes(pt));
-            encryptOutput = _serde.Encrypt(new()
+            encryptOutput = _encryptionSdk.Encrypt(new()
             {
                 EncryptionContext = new()
                 {
                     [EnvironmentContextKey] = _env.EnvironmentName,
+                    [PurposeContextKey] = PurposeContextValue,
                 },
                 Keyring = _keyring,
                 Plaintext = stream,
@@ -159,6 +174,6 @@ sealed partial class AwsKmsEncryption<TData>
     [LoggerMessage(eventId: 2, Error, "Can't convert a token into a value of type {Type}!")]
     partial void FromTokenFailed(Type type, Exception e);
 
-    [LoggerMessage(eventId: 3, Error, "Value's encryption context's environment '{Environment:l}' failed to match the deployed environment!")]
-    partial void IncorrectEncryptionContext(string? environment);
+    [LoggerMessage(eventId: 3, Error, "Value's encryption context's key '{ContextKey:l}' has invalid value '{ContextValue:l}'!")]
+    partial void IncorrectEncryptionContext(string contextKey, string? contextValue);
 }
