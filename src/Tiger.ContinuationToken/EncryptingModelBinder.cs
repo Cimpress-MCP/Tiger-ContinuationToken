@@ -14,9 +14,7 @@
 //   limitations under the License.
 // </copyright>
 
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using static Microsoft.AspNetCore.Mvc.ModelBinding.ModelBindingResult;
-using static Microsoft.Extensions.Logging.LoggerMessage;
 
 namespace Tiger.ContinuationToken;
 
@@ -29,7 +27,7 @@ sealed partial class EncryptingModelBinder<TData>
     where TData : notnull
 {
     static readonly Func<ILogger, string, IDisposable> s_decryptingScope =
-        DefineScope<string>("EncryptedValue: {EncryptedValue:l}");
+        LoggerMessage.DefineScope<string>("EncryptedValue: {EncryptedValue:l}");
 
     readonly IEncryption<TData> _encryption;
     readonly ILogger _logger;
@@ -59,7 +57,7 @@ sealed partial class EncryptingModelBinder<TData>
         bindingContext.ModelState.SetModelValue(name, valueProviderResult);
 
         var encryptedValue = valueProviderResult.FirstValue;
-        if (encryptedValue is not { Length: > 0 } ev)
+        if (encryptedValue is not { Length: not 0 } ev)
         {
             bindingContext.Result = Success(ContinuationToken<TData>.Empty);
             return Task.CompletedTask;
@@ -83,5 +81,5 @@ sealed partial class EncryptingModelBinder<TData>
     }
 
     [LoggerMessage(Level = Information, Message = "Failed to decrypt continuation token.")]
-    partial void DecryptionFailed(CryptographicException ce);
+    partial void DecryptionFailed(Exception e);
 }

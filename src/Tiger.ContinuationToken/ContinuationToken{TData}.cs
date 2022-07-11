@@ -22,7 +22,7 @@ namespace Tiger.ContinuationToken;
 /// <summary>Represents an encrypted continuation point of a scan of a dataset.</summary>
 /// <typeparam name="TData">The type of the underlying data.</typeparam>
 /// <param name="Value">The decoded value.</param>
-/// <param name="OpaqueValue">The original, opaue value.</param>
+/// <param name="OpaqueValue">The original, opaque value.</param>
 [TypeConverter(typeof(TypeConverter))]
 [SwaggerSchemaFilter(typeof(SchemaFilter))]
 public readonly record struct ContinuationToken<TData>(Option<TData> Value, string OpaqueValue)

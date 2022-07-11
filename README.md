@@ -18,6 +18,17 @@ Once the protection has been configured, the tokens' model binder can be made ac
 services.AddMvc().AddContinuationTokens();
 ```
 
+The configuration framework wiil, by default, look for the ARN of a KMS key at the configuration path `ContinuationToken:KmsKeyArn`. An alternative section name (that is, the `ContinuationToken` part of the default value) may be provided as an argument to `AddContinuationTokens`. An implmenting service will require the following permissions on the provided key:
+
+- `kms:Decrypt`
+- `kms:Encrypt`
+- `kms:GenerateDataKey`
+
+If desired, permissions can be narrowed further by ensuring that the encyption context has the following values via an IAM `Condition`:
+
+- "Environment": `DOTNET_ENVIRONMENT`
+- "Purpose": "Tiger.ContinuationToken"
+
 The type may now be used as a parameter to a controller action, as demonstrated here with an action which retrieved a page of Pool entities:
 
 ```csharp

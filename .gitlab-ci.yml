@@ -29,7 +29,9 @@ test:
     policy: pull
   artifacts:
     reports:
-      cobertura: ./unit/TestResults/**/coverage.cobertura.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: ./unit/TestResults/**/coverage.cobertura.xml
       junit: ./unit/TestResults/TestResults.xml
 
 pack:
