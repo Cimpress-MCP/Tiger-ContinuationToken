@@ -14,8 +14,6 @@
 //   limitations under the License.
 // </copyright>
 
-using System.Globalization;
-
 namespace Tiger.ContinuationToken;
 
 /// <summary>

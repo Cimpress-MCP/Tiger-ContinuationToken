@@ -1,0 +1,20 @@
+<Project>
+
+  <PropertyGroup>
+    <Authors>cosborn@cimpress.com</Authors>
+    <PackageProjectUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIcon>tiger_logo.png</PackageIcon>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Cimpress-MCP/Tiger-ContinutationToken.git</RepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)../tiger_logo.png" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+</Project>

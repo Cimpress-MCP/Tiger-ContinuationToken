@@ -14,6 +14,11 @@
 //   limitations under the License.
 // </copyright>
 
+using AWS.EncryptionSDK;
+using AWS.EncryptionSDK.Core;
+using Microsoft.Extensions.Hosting;
+using Moq;
+
 namespace Test;
 
 [Properties(QuietOnSuccess = true)]
@@ -21,11 +26,34 @@ public abstract class ReferenceEncryptionTests<TData>
     where TData : class
 {
     [Property(DisplayName = "References can round-trip through encryption.")]
-    public void RoundTripEncryption(NonNull<TData> datum)
+    public void RoundTripEncryption(NonNull<TData> datum, NonEmptyString environmentName)
     {
-        IEncryption<TData> sut = new DataProtectorEncryption<TData>(
-            new EphemeralDataProtectionProvider(NullLoggerFactory.Instance),
-            NullLogger<DataProtectorEncryption<TData>>.Instance);
+        var keyring = Mock.Of<IKeyring>();
+        var env = Mock.Of<IHostEnvironment>(e => e.EnvironmentName == environmentName.Get);
+        var serde = new Mock<IAwsEncryptionSdk>();
+        _ = serde
+            .Setup(s => s.Encrypt(It.IsAny<EncryptInput>()))
+            .Returns<EncryptInput>(ei => new()
+            {
+                Ciphertext = ei.Plaintext,
+                EncryptionContext = ei.EncryptionContext,
+            });
+        _ = serde
+            .Setup(s => s.Decrypt(It.IsAny<DecryptInput>()))
+            .Returns<DecryptInput>(di => new()
+            {
+                Plaintext = di.Ciphertext,
+                EncryptionContext = new()
+                {
+                    ["Environment"] = environmentName.Get,
+                    ["Purpose"] = "Tiger.ContinuationToken",
+                },
+            });
+        IEncryption<TData> sut = new AwsKmsEncryption<TData>(
+            serde.Object,
+            keyring,
+            env,
+            NullLogger<AwsKmsEncryption<TData>>.Instance);
 
         var actual = sut.Decrypt(sut.Encrypt(datum.Get));
 
